@@ -1,12 +1,8 @@
-#
-# TODO:
-# - eliminate libtool dependency,
-#
 Summary:	ax25 tools for hamradio
 Summary(pl):	Narzêdzia ax25 dla hamradio
 Name:		ax25-tools
 Version:	0.0.8
-Release:	3.9
+Release:	4
 License:	LGPL
 Group:		Applications/Communications
 Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
