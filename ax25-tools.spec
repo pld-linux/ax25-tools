@@ -9,15 +9,15 @@ Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
 # Source0-md5:	70172b979b38a9434f21d2e8152f0d5e
 URL:		http://ax25.sourceforge.net/
 BuildRequires:	libax25-devel
+BuildRequires:	libtool >= 1.4.2
 BuildRequires:	zlib-devel
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	glibc >= 2.2
-Requires:	kernel >= 2.2.0
-Requires:	libtool >= 1.4.2
 Requires:	libax25 >= 0.0.9
 Requires:	zlib >= 1.1.3
-%define 	_noautoreq	libfltk.so.1 
+Conflicts:	kernel < 2.2.0
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define 	_noautoreq	libfltk.so.1 
 %define		_localstatedir	/var/lib
 
 %description
