@@ -1,14 +1,14 @@
 Summary: ax25 toolls for hamradio.
 Name: ax25-tools
 Version: 0.0.8
-Release: 1
+Release: 2
 License: LGPL
 Group: Applications/Communications
 Group(pl): Aplikacje/Komunikacja
 Source0: http://prdownloads.sourceforge.net/ax25/ax25-tools-%{version}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}-root
 ExclusiveArch: %{ix86}
-Requires: glibc-2.2.4
+Requires: glibc >= 2.2
 Requires: kernel >= 2.2.0
 Requires: libtool >= 1.4.2
 Requires: libax25 >= 0.0.9
