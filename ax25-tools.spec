@@ -17,7 +17,7 @@ Requires:	zlib >= 1.1.3
 Conflicts:	kernel < 2.2.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define 	_noautoreq	libfltk.so.1 
+%define 	_noautoreq	libfltk.so.1
 %define		_localstatedir	/var/lib
 
 %description
