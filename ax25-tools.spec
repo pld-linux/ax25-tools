@@ -21,6 +21,8 @@ Requires:	libax25 >= 0.0.9
 Requires:	zlib >= 1.1.3
 %define 	_noautoreq	libfltk.so.1 
 
+%define		_localstatedir	/var/lib
+
 %description
 Tools for start up ax25 protocol.
 
@@ -32,13 +34,12 @@ Narzêdzia inicjalizuj±ce protokó³ ax25.
 
 %build
 %configure2_13 \
-		--localstatedir=/var/lib \
-		--without-x
+	--without-x
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/var/lib/ax25
+install -d $RPM_BUILD_ROOT%{_localstatedir}/ax25
 
 %{__make} install installconf \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -59,4 +60,4 @@ rm -rf $RPM_BUILD_ROOT
 %docdir %{_docdir}/ax25-tools
 %dir %{_docdir}/ax25-tools
 %{_mandir}/man[14589]/*
-/var/lib/*
+%{_localstatedir}/ax25/*
