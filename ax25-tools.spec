@@ -1,9 +1,12 @@
-# TODO: FHS (/var/ax25 -> /var/lib/ax25(?))
+#
+# TODO:
+# - eliminate libtool dependency,
+#
 Summary:	ax25 tools for hamradio
 Summary(pl):	Narzêdzia ax25 dla hamradio
 Name:		ax25-tools
 Version:	0.0.8
-Release:	3
+Release:	3.9
 License:	LGPL
 Group:		Applications/Communications
 Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
@@ -16,6 +19,7 @@ Requires:	kernel >= 2.2.0
 Requires:	libtool >= 1.4.2
 Requires:	libax25 >= 0.0.9
 Requires:	zlib >= 1.1.3
+%define 	_noautoreq	libfltk.so.1 
 
 %description
 Tools for start up ax25 protocol.
@@ -27,12 +31,14 @@ Narzêdzia inicjalizuj±ce protokó³ ax25.
 %setup -q
 
 %build
-%configure2_13
+%configure2_13 \
+		--localstatedir=/var/lib \
+		--without-x
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/var/ax25
+install -d $RPM_BUILD_ROOT/var/lib/ax25
 
 %{__make} install installconf \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -53,5 +59,4 @@ rm -rf $RPM_BUILD_ROOT
 %docdir %{_docdir}/ax25-tools
 %dir %{_docdir}/ax25-tools
 %{_mandir}/man[14589]/*
-# NOT FHS-compliant
-/var/ax25/*
+/var/lib/*
