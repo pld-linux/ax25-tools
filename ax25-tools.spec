@@ -36,7 +36,7 @@ install -d $RPM_BUILD_ROOT/var/ax25
 %{__make} DESTDIR=$RPM_BUILD_ROOT install installconf
 gzip -9nf $RPM_BUILD_ROOT%{_datadir}/doc/ax25-tools/*
 
-%clean                                                                          
+%clean
 rm -rf $RPM_BUILD_ROOT
 
 %post	-p /sbin/ldconfig
