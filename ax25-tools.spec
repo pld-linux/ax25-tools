@@ -2,14 +2,13 @@ Summary:	ax25 tools for hamradio
 Summary(pl):	Narzêdzia ax25 dla hamradio
 Name:		ax25-tools
 Version:	0.0.8
-Release:	2
+Release:	3
 License:	LGPL
 Group:		Applications/Communications
 Source0:	http://prdownloads.sourceforge.net/ax25/%{name}-%{version}.tar.gz
 BuildRequires:	libax25-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-ExclusiveArch:	%{ix86}
 Requires:	glibc >= 2.2
 Requires:	kernel >= 2.2.0
 Requires:	libtool >= 1.4.2
