@@ -32,8 +32,8 @@ Narzêdzia inicjalizuj±ce protokó³ ax25.
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/var/ax25
 
-%{__make} DESTDIR=$RPM_BUILD_ROOT install installconf
-gzip -9nf $RPM_BUILD_ROOT%{_datadir}/doc/ax25-tools/*
+%{__make} install installconf \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -43,11 +43,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%doc dmascc/README.dmascc tcpip/ttylinkd.{README,INSTALL}
+%doc user_call/README.user_call
 %{_sysconfdir}/ax25/*
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %docdir %{_docdir}/ax25-tools
 %dir %{_docdir}/ax25-tools
-%{_docdir}/ax25-tools/*.gz
 %{_mandir}/man[14589]/*
 /var/ax25/*
