@@ -1,0 +1,199 @@
+--- ax25-tools-0.0.8/hdlcutil/sethdlc.c.orig	2001-04-10 04:10:50.000000000 +0200
++++ ax25-tools-0.0.8/hdlcutil/sethdlc.c	2004-04-10 16:10:41.437874346 +0200
+@@ -478,8 +478,6 @@
+ 	char getsetparams = 0;
+ 	char cal = 0;
+ 	int cal_val = 0;
+-	struct sm_ioctl bsi;
+-	struct baycom_ioctl bbi;
+ 	struct hdrvc_channel_state chst;
+ 	unsigned char pktbuf[2048];
+ 
+@@ -547,21 +545,6 @@
+ 			       chst.dcd ? 'D' : '-', chst.ptt ? 'P' : '-',
+ 			       chst.rx_packets, chst.tx_packets, chst.rx_errors, 
+ 			       chst.tx_errors);
+-#ifdef HDRVC_KERNEL
+-			if (hdrvc_sm_ioctl(SMCTL_GETDEBUG, &bsi) >= 0) {
+-				printf("   intrate: %u  modcyc: %u  "
+-				       "demodcyc: %u  dmares: %u", 
+-				       bsi.data.dbg.int_rate, 
+-				       bsi.data.dbg.mod_cycles, 
+-				       bsi.data.dbg.demod_cycles,
+-				       bsi.data.dbg.dma_residue);
+-			} 
+-			if (hdrvc_baycom_ioctl(BAYCOMCTL_GETDEBUG, &bbi) >= 0) {
+-				printf("   dbg1: %lu  dbg2: %lu  dbg3: %li", 
+-				       bbi.data.dbg.debug1, bbi.data.dbg.debug2, 
+-				       bbi.data.dbg.debug3);
+-			} 
+-#endif /* HDRVC_KERNEL */
+ 			printf("\n");
+ 			break;
+ 		case 2:
+--- ax25-tools-0.0.8/hdlcutil/hdrvcomm.h.orig	2001-04-10 04:10:48.000000000 +0200
++++ ax25-tools-0.0.8/hdlcutil/hdrvcomm.h	2004-04-10 16:09:53.581322837 +0200
+@@ -42,8 +42,6 @@
+ 
+ #ifdef HDRVC_KERNEL
+ #include <linux/hdlcdrv.h>
+-#include <linux/soundmodem.h>
+-#include <linux/baycom.h>
+ #endif /* HDRVC_KERNEL */
+ 
+ /* ---------------------------------------------------------------------- */
+@@ -104,9 +102,6 @@
+ 
+ #ifdef HDRVC_KERNEL
+ extern int hdrvc_hdlcdrv_ioctl(int cmd, struct hdlcdrv_ioctl *par);
+-extern int hdrvc_sm_ioctl(int cmd, struct sm_ioctl *par);
+-extern int hdrvc_baycom_ioctl(int cmd, struct baycom_ioctl *par);
+-extern int hdrvc_diag(struct sm_diag_data *diag);
+ #endif /* HDRVC_KERNEL */
+ 
+ /* ---------------------------------------------------------------------- */
+--- ax25-tools-0.0.8/hdlcutil/hdrvcomm.c.orig	2001-04-10 04:10:48.000000000 +0200
++++ ax25-tools-0.0.8/hdlcutil/hdrvcomm.c	2004-04-10 16:12:47.636682893 +0200
+@@ -48,6 +48,7 @@
+ #include "hdrvcomm.h"
+ #include "usersmdiag.h"
+ #include <net/if_arp.h>
++#include <netinet/in.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_packet.h>
+ #ifndef SOL_PACKET
+@@ -311,36 +312,6 @@
+ 
+ /* ---------------------------------------------------------------------- */
+ 
+-int hdrvc_sm_ioctl(int cmd, struct sm_ioctl *par)
+-{
+-	struct ifreq ifr = ifr_h;
+-	
+-	if (!kernel_mode) {
+-		errno = EINVAL;
+-		return -1;
+-	}
+-	ifr.ifr_data = (caddr_t)par;
+-	par->cmd = cmd;
+-	return ioctl(fd, SIOCDEVPRIVATE, &ifr);
+-}
+-
+-/* ---------------------------------------------------------------------- */
+-
+-int hdrvc_baycom_ioctl(int cmd, struct baycom_ioctl *par)
+-{
+-	struct ifreq ifr = ifr_h;
+-	
+-	if (!kernel_mode) {
+-		errno = EINVAL;
+-		return -1;
+-	}
+-	ifr.ifr_data = (caddr_t)par;
+-	par->cmd = cmd;
+-	return ioctl(fd, SIOCDEVPRIVATE, &ifr);
+-}
+-
+-/* ---------------------------------------------------------------------- */
+-
+ unsigned int hdrvc_get_ifflags(void)
+ {
+ 	struct ifreq ifr;
+@@ -356,46 +327,6 @@
+ 	return IFF_UP | IFF_RUNNING;
+ }
+ 
+-/* ---------------------------------------------------------------------- */
+-
+-int hdrvc_diag(struct sm_diag_data *diag)
+-{
+-	struct sm_ioctl smi;
+-	int ret;
+-	struct usersmmsg msg;
+-
+-	if (!diag) {
+-		errno = EINVAL;
+-		return -1;
+-	}
+-	if (kernel_mode) {
+-		memcpy(&smi.data.diag, diag, sizeof(smi.data.diag));
+-		ret = hdrvc_sm_ioctl(SMCTL_DIAGNOSE, &smi);
+-		memcpy(diag, &smi.data.diag, sizeof(smi.data.diag));
+-		return ret;
+-	}
+-	msg.hdr.type = USERSM_CMD_REQ_DIAG;
+-	msg.hdr.channel = 0;
+-	msg.data.diag.mode = diag->mode;
+-	msg.data.diag.flags = diag->flags;
+-	msg.data.diag.samplesperbit = diag->samplesperbit;
+-	msg.data.diag.datalen = diag->datalen;
+-	hdrvc_sendmsg(&msg, sizeof(msg.data.diag));
+-	ret = hdrvc_recvmsg(&msg, sizeof(msg), USERSM_CMD_ACK_DIAG);
+-	if (ret < 0)
+-		return ret;
+-	if (ret < sizeof(msg.data.diag) || ret < sizeof(msg.data.diag)+msg.data.diag.datalen*sizeof(short)) {
+-		errno = EIO;
+-		return -1;
+-	}
+-	diag->mode = msg.data.diag.mode;
+-	diag->flags = msg.data.diag.flags;
+-	diag->samplesperbit = msg.data.diag.samplesperbit;
+-	diag->datalen = msg.data.diag.datalen;
+-	memcpy(diag->data, msg.data.diag_out.samples, msg.data.diag.datalen*sizeof(short));
+-	return 0;
+-}
+-
+ #endif /* HDRVC_KERNEL */
+ 
+ /* ---------------------------------------------------------------------- */
+@@ -593,27 +524,6 @@
+ 		errno = EINVAL;
+ 		return -1;
+ 	}
+-#ifdef HDRVC_KERNEL
+-	if (kernel_mode) {
+-		struct sm_ioctl smi;
+-		static unsigned int modeconvsm[4] = {
+-			SM_DIAGMODE_OFF, SM_DIAGMODE_INPUT, SM_DIAGMODE_DEMOD, SM_DIAGMODE_CONSTELLATION
+-		};
+-
+-		smi.data.diag.mode = modeconvsm[mode];
+-		smi.data.diag.flags = (flags & HDRVC_DIAGFLAG_DCDGATE) ? SM_DIAGFLAG_DCDGATE : 0;
+-		smi.data.diag.samplesperbit = 0;
+-		smi.data.diag.datalen = maxdatalen;
+-		smi.data.diag.data = data;
+-		if ((ret = hdrvc_sm_ioctl(SMCTL_DIAGNOSE, &smi)) < 0)
+-			return ret;
+-		if (samplesperbit)
+-			*samplesperbit = smi.data.diag.samplesperbit;
+-		if (smi.data.diag.mode != modeconvsm[mode] || !(smi.data.diag.flags & SM_DIAGFLAG_VALID))
+-			return 0;
+-		return smi.data.diag.datalen;
+-	}
+-#endif /* HDRVC_KERNEL */
+ 	msg.hdr.type = USERSM_CMD_REQ_DIAG;
+ 	msg.hdr.channel = 0;
+ 	msg.data.diag.mode = modeconvusersm[mode];
+--- ax25-tools-0.0.8/hdlcutil/Makefile.am.orig	2001-04-10 04:10:44.000000000 +0200
++++ ax25-tools-0.0.8/hdlcutil/Makefile.am	2004-04-10 16:23:49.641133913 +0200
+@@ -5,10 +5,9 @@
+ 
+ SUBDIRS = fl
+ 
+-bin_PROGRAMS = sethdlc smmixer $(X11_bin_programs)
++bin_PROGRAMS = sethdlc $(X11_bin_programs)
+ 
+ sethdlc_SOURCES = sethdlc.c hdrvcomm.c hdrvcomm.h usersmdiag.h
+-smmixer_SOURCES = smmixer.c hdrvcomm.c hdrvcomm.h usersmdiag.h
+ smdiag_SOURCES = smdiag.c hdrvcomm.c hdrvcomm.h usersmdiag.h
+ 
+ smdiag_LDADD = $(X_LIBS) -lX11 $(X_EXTRA_LIBS)
+@@ -19,7 +18,7 @@
+ AX25_SYSCONFDIR=$(sysconfdir)/ax25/
+ AX25_LOCALSTATEDIR=$(localstatedir)/ax25/
+ 
+-man_MANS = sethdlc.8 smmixer.8 baycom.9 hdlcdrv.9 soundmodem.9 smdiag.8
++man_MANS = sethdlc.8 baycom.9 hdlcdrv.9 soundmodem.9 smdiag.8
+ 
+ EXTRA_DIST = $(man_MANS) 
+ 
