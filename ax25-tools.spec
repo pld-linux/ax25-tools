@@ -1,3 +1,4 @@
+# TODO: FHS (/var/ax25 -> /var/lib/ax25(?))
 Summary:	ax25 tools for hamradio
 Summary(pl):	Narzêdzia ax25 dla hamradio
 Name:		ax25-tools
@@ -5,7 +6,8 @@ Version:	0.0.8
 Release:	3
 License:	LGPL
 Group:		Applications/Communications
-Source0:	http://prdownloads.sourceforge.net/ax25/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
+URL:		http://ax25.sourceforge.net/
 BuildRequires:	libax25-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -51,4 +53,5 @@ rm -rf $RPM_BUILD_ROOT
 %docdir %{_docdir}/ax25-tools
 %dir %{_docdir}/ax25-tools
 %{_mandir}/man[14589]/*
+# NOT FHS-compliant
 /var/ax25/*
