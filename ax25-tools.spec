@@ -6,6 +6,7 @@ Release:	4
 License:	LGPL
 Group:		Applications/Communications
 Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
+# Source0-md5:	70172b979b38a9434f21d2e8152f0d5e
 URL:		http://ax25.sourceforge.net/
 BuildRequires:	libax25-devel
 BuildRequires:	zlib-devel
