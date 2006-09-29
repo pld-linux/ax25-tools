@@ -2,12 +2,13 @@ Summary:	ax25 tools for hamradio
 Summary(pl):	Narzêdzia ax25 dla hamradio
 Name:		ax25-tools
 Version:	0.0.8
-Release:	5
+Release:	6
 License:	LGPL
 Group:		Applications/Communications
 Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
 # Source0-md5:	70172b979b38a9434f21d2e8152f0d5e
-Patch0:		%{name}-linux26.patch
+Patch0:		%{name}-soundmodem.patch
+Patch1:		%{name}-build.patch
 URL:		http://ax25.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -31,6 +32,7 @@ Narzêdzia inicjalizuj±ce protokó³ ax25.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__aclocal}
