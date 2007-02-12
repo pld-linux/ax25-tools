@@ -1,5 +1,5 @@
 Summary:	ax25 tools for hamradio
-Summary(pl):	Narzêdzia ax25 dla hamradio
+Summary(pl.UTF-8):   NarzÄ™dzia ax25 dla hamradio
 Name:		ax25-tools
 Version:	0.0.8
 Release:	6
@@ -26,8 +26,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Tools for start up ax25 protocol.
 
-%description -l pl
-Narzêdzia inicjalizuj±ce protokó³ ax25.
+%description -l pl.UTF-8
+NarzÄ™dzia inicjalizujÄ…ce protokÃ³Å‚ ax25.
 
 %prep
 %setup -q
