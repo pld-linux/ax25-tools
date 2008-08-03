@@ -2,7 +2,7 @@ Summary:	ax25 tools for hamradio
 Summary(pl.UTF-8):	Narzędzia ax25 dla hamradio
 Name:		ax25-tools
 Version:	0.0.8
-Release:	7
+Release:	8
 License:	LGPL
 Group:		Applications/Communications
 Source0:	http://dl.sourceforge.net/ax25/%{name}-%{version}.tar.gz
@@ -46,10 +46,15 @@ Narzędzia inicjalizujące protokół ax25.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_localstatedir}/ax25
+install -d $RPM_BUILD_ROOT{%{_mandir}/man3,%{_localstatedir}/ax25}
 
 %{__make} install installconf \
 	DESTDIR=$RPM_BUILD_ROOT
+
+install hdlcutil/baycom.9	$RPM_BUILD_ROOT%{_mandir}/man3/baycom.3
+install hdlcutil/hdlcdrv.9	$RPM_BUILD_ROOT%{_mandir}/man3/hdlcdrv.3
+
+rm -rf $RPM_BUILD_ROOT%{_mandir}/man9
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -66,5 +71,5 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/*
 %docdir %{_docdir}/ax25-tools
 %dir %{_docdir}/ax25-tools
-%{_mandir}/man[14589]/*
+%{_mandir}/man[13458]/*
 %{_localstatedir}/ax25/*
