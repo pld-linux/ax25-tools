@@ -1,0 +1,98 @@
+--- ax25-tools-0.0.8/ax25/axparms.c.orig	2001-04-10 04:09:25.000000000 +0200
++++ ax25-tools-0.0.8/ax25/axparms.c	2023-03-24 18:00:48.184284391 +0100
+@@ -147,7 +147,7 @@ PROC_AX25_ROUTE_FILE);
+ 			return 1;
+ 		}
+ 		while (fgets(routebuf,80,fp))
+-			printf(routebuf);
++			fputs(routebuf, stdout);
+ 		puts("");
+ 	}
+ 
+--- ax25-tools-0.0.8/kiss/mkiss.c.orig	2001-05-03 04:11:53.000000000 +0200
++++ ax25-tools-0.0.8/kiss/mkiss.c	2023-03-24 19:04:26.286933287 +0100
+@@ -433,17 +433,17 @@ int main(int argc, char *argv[])
+ 			return 1;
+ 		case ':':
+ 		case '?':
+-			fprintf(stderr, usage_string);
++			fputs(usage_string, stderr);
+ 			return 1;
+ 		}
+ 	}
+ 
+ 	if ((argc - optind) < 2) {
+-		fprintf(stderr, usage_string);
++		fputs(usage_string, stderr);
+ 		return 1;
+ 	}
+ 	if ((numptys = argc - optind - 1) > 16) {
+-		fprintf(stderr, "mkiss: max 16 pty interfaces allowed.\n");
++		fputs("mkiss: max 16 pty interfaces allowed.\n", stderr);
+ 		return 1;
+ 	}
+ 
+--- ax25-tools-0.0.8/netrom/nrparms.c.orig	2001-04-10 04:18:31.000000000 +0200
++++ ax25-tools-0.0.8/netrom/nrparms.c	2023-03-24 19:06:04.896399074 +0100
+@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
+ 	
+ 	if (strncmp(argv[1], "-n", 2) == 0) {
+ 		if (argc < 9) {
+-			fprintf(stderr, nodes_usage);
++			fputs(nodes_usage, stderr);
+ 			close(s);
+ 			return 1;
+ 		}
+@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
+ 
+ 	if (strncmp(argv[1], "-r", 2) == 0) {
+ 		if (argc < 6) {
+-			fprintf(stderr, routes_usage);
++			fputs(routes_usage, stderr);
+ 			close(s);
+ 			return 1;
+ 		}
+@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
+ 		return 0;
+ 	}
+ 
+-	fprintf(stderr, "usage: nrparms -nodes|-routes|-version ...\n");
++	fputs("usage: nrparms -nodes|-routes|-version ...\n", stderr);
+ 	
+ 	close(s);
+ 	
+--- ax25-tools-0.0.8/rose/rsparms.c.orig	2001-04-10 04:18:36.000000000 +0200
++++ ax25-tools-0.0.8/rose/rsparms.c	2023-03-24 19:07:46.705847525 +0100
+@@ -74,12 +74,12 @@ void nodes(int s, int argc, char *argv[]
+ 	int args;
+ 
+ 	if (argc < 3) {
+-		fprintf(stderr, nodes_usage);
++		fputs(nodes_usage, stderr);
+ 		exit(1);
+ 	}
+ 
+ 	if (ax25_config_load_ports() == 0) {
+-		fprintf(stderr, "rsparms: nodes: no AX.25 ports configured\n");
++		fputs("rsparms: nodes: no AX.25 ports configured\n", stderr);
+ 		exit(1);
+ 	}
+ 
+@@ -120,7 +120,7 @@ void nodes(int s, int argc, char *argv[]
+ 	}
+ 
+ 	if (argc < 6) {
+-		fprintf(stderr, nodes_usage);
++		fputs(nodes_usage, stderr);
+ 		exit(1);
+ 	}
+ 
+@@ -129,7 +129,7 @@ void nodes(int s, int argc, char *argv[]
+ 		mask++;
+ 
+ 		if (sscanf(mask, "%hd", &rs_node.mask) != 1) {
+-			fprintf(stderr, "rsparms: nodes: no mask supplied!\n");
++			fputs("rsparms: nodes: no mask supplied!\n", stderr);
+ 			close(s);
+ 			exit(1);
+ 		}

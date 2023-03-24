@@ -1,0 +1,62 @@
+--- ax25-tools-0.0.8/tcpip/rip98d.c.orig	2001-05-03 04:03:38.000000000 +0200
++++ ax25-tools-0.0.8/tcpip/rip98d.c	2023-03-24 19:09:19.852009575 +0100
+@@ -32,7 +32,7 @@ struct dest_struct dest_list[50];
+ int dest_count = 0;
+ 
+ int debug      = FALSE;
+-int restrict   = FALSE;
++int restrict_  = FALSE;
+ int logging    = FALSE;
+ 
+ struct route_struct *first_route = NULL;
+@@ -202,7 +202,7 @@ static int read_routes(void)
+ 			continue;
+ 		}
+ 
+-		if (restrict) {
++		if (restrict_) {
+ 			if (inet_netof(address) != 44) {
+ 				if (debug && logging)
+ 					syslog(LOG_DEBUG, "rejecting route to %s/%ld - not ampr.org\n", inet_ntoa(address), netmask);
+@@ -285,7 +285,7 @@ int main(int argc, char **argv)
+ 				logging = TRUE;
+ 				break;
+ 			case 'r':
+-				restrict = TRUE;
++				restrict_ = TRUE;
+ 				break; 
+ 			case 't':
+ 				interval = atoi(optarg) * 60;
+--- ax25-tools-0.0.8/tcpip/rip98d.h.orig	2001-04-10 04:18:40.000000000 +0200
++++ ax25-tools-0.0.8/tcpip/rip98d.h	2023-03-24 19:10:37.668254675 +0100
+@@ -44,7 +44,7 @@ extern struct dest_struct dest_list[];
+ extern int dest_count;
+ 
+ extern int debug;
+-extern int restrict;
++extern int restrict_;
+ extern int logging;
+ 
+ /* In rip98d.c */
+--- ax25-tools-0.0.8/tcpip/rip98r.c.orig	2001-05-03 03:58:33.000000000 +0200
++++ ax25-tools-0.0.8/tcpip/rip98r.c	2023-03-24 19:11:37.947928112 +0100
+@@ -127,7 +127,7 @@ void receive_routes(int s)
+ 			continue;
+ 		}
+ 
+-		if (restrict) {
++		if (restrict_) {
+ 			if (network != 44) {
+ 				if (debug && logging)
+ 					syslog(LOG_DEBUG, "    route to %s/%d metric %d - rejected\n", inet_ntoa(addr), bits, metric);
+--- ax25-tools-0.0.8/dmascc/dmascc_cfg.c.orig	2001-05-10 12:44:45.000000000 +0200
++++ ax25-tools-0.0.8/dmascc/dmascc_cfg.c	2023-03-24 19:32:51.854360102 +0100
+@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
+   memset(&param, 0, sizeof(param));
+   param.txpause = -1;
+ 
+-  if strncmp(argv[1], "dmascc", 6) {
++  if (strncmp(argv[1], "dmascc", 6)) {
+     fprintf(stderr, "invalid interface name.\n");
+     return 5;
+   }
